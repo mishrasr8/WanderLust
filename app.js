@@ -16,28 +16,13 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 
 
-const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL="mongosh "mongodb+srv://cluster0.dzuzp80.mongodb.net/" --apiVersion 1 --username workspacesuyash_db_user";
 
 main().then((res)=>{
     console.log("Database is Connected")
 }).catch((err)=>{
     console.log(err);
 });
-
-
-// app.get("/test",async (req,res)=>{
-//     let sample=new Listing({
-//         title:"My New Villa",
-//         desc:"by the beach",
-//         price:7000,
-//         location:"Andaman",
-//         country:"India"
-//     })
-
-//     await sample.save();
-//     console.log("Samplewas Saved");
-//     res.send("Successful testing");
-// });
 
 //Index Route
 
@@ -95,25 +80,6 @@ app.delete("/listings/:id",async(req,res)=>{
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 async function main() {
     await mongoose.connect(MONGO_URL);
