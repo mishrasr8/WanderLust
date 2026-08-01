@@ -1,4 +1,5 @@
 const express=require("express");
+require("dotenv").config();
 const app=express();
 const mongoose=require("mongoose");
 const path=require("path");
@@ -16,7 +17,8 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 
 
-const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
+const MONGO_URL = process.env.MONGO_URL;
+const PORT = process.env.PORT || 8080;
 
 main().then((res)=>{
     console.log("Database is Connected")
@@ -116,13 +118,15 @@ app.delete("/listings/:id",async(req,res)=>{
 
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(process.env.MONGO_URL);
 }
 
-app.get("/",(req,res)=>{
-    res.send("Root is working");
+app.get("/",async (req,res)=>{
+    let{id}=req.params;
+    const listing=await Listing.findById(id);
+    res.render("./listings/home.ejs",{listing});
 });
 
-app.listen(8080,()=>{
-    console.log("server is listening")
+app.listen(process.env.PORT,()=>{
+    console.log("server is listening on ",process.env.PORT)
 });
