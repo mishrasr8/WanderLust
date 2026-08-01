@@ -29,7 +29,9 @@ async function main() {
 
 // Root Route
 app.get("/", (req, res) => {
-    res.redirect("/listings");
+    let{id}=req.params;
+    const listing=await Listing.findById(id);
+    res.render("./listings/home.ejs",{listing});
 });
 
 
