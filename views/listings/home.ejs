@@ -1,140 +1,198 @@
 <% layout("/layouts/boilerplate") %>
 
-<div class="home-page">
+<!-- Hero Section -->
+<section class="home-hero rounded-4 overflow-hidden mt-4">
+    <div class="hero-overlay d-flex align-items-center">
+        <div class="container text-white py-5">
 
-    <!-- HERO -->
-    <section class="home-hero">
-        <div class="hero-overlay"></div>
+            <div class="row">
+                <div class="col-lg-7 col-md-9">
 
-        <div class="hero-content">
-            <p class="hero-label">
-                <i class="fa-regular fa-compass"></i>
-                Explore. Stay. Wander.
-            </p>
+                    <p class="fw-semibold mb-3">
+                        <i class="fa-regular fa-compass me-2"></i>
+                        Explore. Stay. Wander.
+                    </p>
 
-            <h1>
-                Find your next<br>
-                unforgettable stay.
-            </h1>
+                    <h1 class="display-3 fw-bold mb-4">
+                        Find your next unforgettable stay.
+                    </h1>
 
-            <p class="hero-subtitle">
-                Discover beautiful places, unique stays and destinations
-                worth remembering.
-            </p>
+                    <p class="lead mb-4">
+                        Discover beautiful places, unique stays and
+                        destinations worth remembering.
+                    </p>
 
-            <div class="hero-buttons">
-                <a href="/listings" class="btn explore-btn">
-                    Explore Listings
-                    <i class="fa-solid fa-arrow-right"></i>
-                </a>
+                    <div class="d-flex gap-3 flex-wrap">
 
-                <a href="/listings/new" class="btn host-btn">
-                    <i class="fa-solid fa-plus"></i>
-                    Add a Listing
-                </a>
+                        <a href="/listings"
+                           class="btn btn-danger btn-lg">
+                            Explore Listings
+                            <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </a>
+
+                        <a href="/listings/new"
+                           class="btn btn-light btn-lg">
+                            <i class="fa-solid fa-plus me-2"></i>
+                            Add a Listing
+                        </a>
+
+                    </div>
+
+                </div>
             </div>
+
         </div>
-    </section>
+    </div>
+</section>
 
 
-    <!-- INTRODUCTION -->
-    <section class="home-intro">
+<!-- Introduction -->
+<section class="text-center py-5 my-4">
 
-        <p class="section-label">DISCOVER WANDERLUST</p>
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
 
-        <h2>
-            Your journey starts with<br>
-            the perfect place.
-        </h2>
+            <p class="text-danger fw-bold small">
+                DISCOVER WANDERLUST
+            </p>
 
-        <p class="intro-text">
-            From peaceful mountain cabins to beachfront escapes,
-            WanderLust helps you discover stays for every kind of adventure.
-        </p>
+            <h2 class="display-6 fw-bold mb-4">
+                Your journey starts with the perfect place.
+            </h2>
 
-    </section>
+            <p class="text-secondary fs-5">
+                From peaceful mountain cabins to beachfront escapes,
+                WanderLust helps you discover stays for every kind
+                of adventure.
+            </p>
+
+        </div>
+    </div>
+
+</section>
 
 
-    <!-- FEATURES -->
-    <section class="home-features">
+<!-- Features -->
+<section class="pb-5">
 
-        <div class="row g-4">
+    <div class="row g-4">
 
-            <div class="col-md-4">
-                <div class="feature-card">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
 
-                    <div class="feature-icon">
+            <div class="card h-100 border rounded-4 p-3">
+
+                <div class="card-body">
+
+                    <div class="feature-icon mb-4">
                         <i class="fa-solid fa-earth-americas"></i>
                     </div>
 
-                    <h4>Explore Places</h4>
+                    <h4 class="card-title fw-semibold">
+                        Explore Places
+                    </h4>
 
-                    <p>
+                    <p class="card-text text-secondary">
                         Browse unique stays and beautiful destinations
                         from around the world.
                     </p>
 
                 </div>
+
             </div>
 
+        </div>
 
-            <div class="col-md-4">
-                <div class="feature-card">
 
-                    <div class="feature-icon">
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+
+            <div class="card h-100 border rounded-4 p-3">
+
+                <div class="card-body">
+
+                    <div class="feature-icon mb-4">
                         <i class="fa-regular fa-heart"></i>
                     </div>
 
-                    <h4>Find Your Stay</h4>
+                    <h4 class="card-title fw-semibold">
+                        Find Your Stay
+                    </h4>
 
-                    <p>
+                    <p class="card-text text-secondary">
                         Discover everything from cozy cottages to
                         luxury villas and mountain retreats.
                     </p>
 
                 </div>
+
             </div>
 
+        </div>
 
-            <div class="col-md-4">
-                <div class="feature-card">
 
-                    <div class="feature-icon">
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+
+            <div class="card h-100 border rounded-4 p-3">
+
+                <div class="card-body">
+
+                    <div class="feature-icon mb-4">
                         <i class="fa-solid fa-house"></i>
                     </div>
 
-                    <h4>Share Your Place</h4>
+                    <h4 class="card-title fw-semibold">
+                        Share Your Place
+                    </h4>
 
-                    <p>
-                        Have a place worth discovering? Add your own
-                        listing and share it with travelers.
+                    <p class="card-text text-secondary">
+                        Have a place worth discovering?
+                        Add your own listing and share it with travelers.
                     </p>
 
                 </div>
+
             </div>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- CTA -->
-    <section class="home-cta">
+<!-- Call To Action -->
+<section class="bg-light rounded-4 p-4 p-md-5 my-5">
 
-        <div>
-            <p class="section-label">READY TO EXPLORE?</p>
+    <div class="row align-items-center g-4">
 
-            <h2>
-                Somewhere new is<br>
-                waiting for you.
+        <div class="col-md-8">
+
+            <p class="text-danger fw-bold small mb-2">
+                READY TO EXPLORE?
+            </p>
+
+            <h2 class="fw-bold mb-0">
+                Somewhere new is waiting for you.
             </h2>
+
         </div>
 
-        <a href="/listings" class="btn cta-btn">
-            Start Exploring
-            <i class="fa-solid fa-arrow-right"></i>
-        </a>
 
-    </section>
+        <div class="col-md-4 text-md-end">
 
-</div>
+            <a href="/listings"
+               class="btn btn-danger btn-lg">
+
+                Start Exploring
+
+                <i class="fa-solid fa-arrow-right ms-2"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
