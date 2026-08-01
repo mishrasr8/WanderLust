@@ -20,8 +20,6 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 
 
-const MONGO_URL = process.env.MONGO_URL;
-const PORT = process.env.PORT || 8080;
 
 main().then((res)=>{
     console.log("Database is Connected")
@@ -124,6 +122,7 @@ app.delete("/listings/:id",async(req,res)=>{
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);
 }
+
 
 app.get("/",async (req,res)=>{
     let{id}=req.params;
