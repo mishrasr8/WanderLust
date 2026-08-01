@@ -28,7 +28,7 @@ async function main() {
 // ================= ROUTES =================
 
 // Root Route
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     let{id}=req.params;
     const listing=await Listing.findById(id);
     res.render("./listings/home.ejs",{listing});
