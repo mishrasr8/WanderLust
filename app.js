@@ -16,7 +16,7 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname,"public")));
 
 
-const MONGO_URL="mongosh "mongodb+srv://cluster0.dzuzp80.mongodb.net/" --apiVersion 1 --username workspacesuyash_db_user";
+const MONGO_URL="mongodb+srv://<db_username>:EIm3aUqSRwnrU59b@cluster0.vgrwjdc.mongodb.net/?appName=Cluster0";
 
 main().then((res)=>{
     console.log("Database is Connected")
