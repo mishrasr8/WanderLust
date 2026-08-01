@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 const initdata = require("./data.js");
 const Listing = require("../model/listing.js");
 
-const MONGO_URL = process.env.ATLASDB_URL;
+const MONGO = process.env.MONGO_URL;
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(MONGO);
 }
 
 const initDB = async () => {
