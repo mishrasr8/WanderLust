@@ -117,6 +117,7 @@
 .hero-overlay {
     min-height: 70vh;
 
+
     background: linear-gradient(
         90deg,
         rgba(0, 0, 0, 0.7),
@@ -145,6 +146,7 @@
 
 
 /* Feature Card Hover */
+
 
 .card {
     transition: 0.2s ease;
