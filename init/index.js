@@ -1,24 +1,30 @@
-const mongoose=require("mongoose");
-const initdata=require("./data.js");
-const Listing=require("../model/listing.js");
+const mongoose = require("mongoose");
+const initdata = require("./data.js");
+const Listing = require("../model/listing.js");
 
-
-const MONGO_URL="mongodb://127.0.0.1:27017/wanderlust";
-
-main().then((res)=>{
-    console.log("Database is Connected")
-}).catch((err)=>{
-    console.log(err);
-});
+const MONGO = process.env.MONGO_URL;
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(MONGO);
 }
 
-const initDB=async()=>{
+const initDB = async () => {
     await Listing.deleteMany({});
     await Listing.insertMany(initdata.data);
-    console.log("Data was initialised")
-}
+    console.log("Data was initialized successfully");
+};
 
-initDB();
+main()
+    .then(async () => {
+        console.log("Database is Connected");
+
+        await initDB();
+
+        await mongoose.connection.close();
+        console.log("Database connection closed");
+    })
+    .catch((err) => {
+        console.error("Database initialization failed:");
+        console.error(err);
+        process.exit(1);
+    });
