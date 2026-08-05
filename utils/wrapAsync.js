@@ -4,3 +4,4 @@ function wrapAsync(fn){
     }
 }
 
+module.exports=wrapAsync;
