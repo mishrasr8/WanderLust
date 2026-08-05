@@ -7,10 +7,10 @@ const ejs=require("ejs");
 const Listing=require("./model/listing.js");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const wrapAsync=require("/utils/wrapAsync.js")
+const wrapAsync=require("./utils/wrapAsync.js")
 
 const MONGO_URL = process.env.MONGO_URL;
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
@@ -27,6 +27,30 @@ main().then((res)=>{
 }).catch((err)=>{
     console.log(err);
 });
+
+
+
+
+
+// ================= DATABASE =================
+
+async function main() {
+    await mongoose.connect(process.env.MONGO_URL);
+}
+
+
+app.get("/",async (req,res)=>{
+    let{id}=req.params;
+    const listing=await Listing.findById(id);
+    res.render("./listings/home.ejs",{listing});
+});
+
+app.listen(process.env.PORT,()=>{
+    console.log("server is listening on ",process.env.PORT)
+});
+
+
+
 
 
 // app.get("/test",async (req,res)=>{
@@ -125,20 +149,3 @@ app.get((err,req,res,next)=>{
 
 
 
-
-// ================= DATABASE =================
-
-async function main() {
-    await mongoose.connect(process.env.MONGO_URL);
-}
-
-
-app.get("/",async (req,res)=>{
-    let{id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("./listings/home.ejs",{listing});
-});
-
-app.listen(process.env.PORT,()=>{
-    console.log("server is listening on ",process.env.PORT)
-});
