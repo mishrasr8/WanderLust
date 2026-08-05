@@ -7,6 +7,7 @@ const ejs=require("ejs");
 const Listing=require("./model/listing.js");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
+const wrapAsync=require("/utils/wrapAsync.js")
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT || 8080;
@@ -44,15 +45,20 @@ main().then((res)=>{
 
 //Index Route
 
-app.get("/listings",async(req,res)=>{
-    const allListings=await Listing.find({});
-    res.render("./listings/index.ejs",{allListings});
+app.get("/listings",async(req,res,next)=>{
+    try{
+        const allListings=await Listing.find({});
+        res.render("./listings/index.ejs",{allListings});
+    }catch (err){
+        next
+    }
 });
 
 //New Route
 
-app.get("/listings/new",(req,res)=>{
-    res.render("./listings/new.ejs");
+app.get("/listings/new",(req,res,next)=>{
+    try{res.render("./listings/new.ejs");}
+    catch(err){next()}
 });
 
 //Show Route
@@ -66,12 +72,12 @@ app.get("/listings/:id",async (req,res)=>{
 
 //Create Route
 
-app.post("/listings",async (req,res)=>{
-    let newListing=new Listing(req.body.listing);
-    await newListing.save();
-    console.log(newListing);
-    res.redirect("/listings");
-});
+app.post("/listings",
+    wrapAsync(async (req,res)=>{
+        let newListing=new Listing(req.body.listing);
+        await newListing.save();
+        res.redirect("/listings");
+}));
 
 //Edit Route
 
@@ -99,7 +105,10 @@ app.delete("/listings/:id",async(req,res)=>{
     res.redirect("/listings");
 });
 
-
+// Error
+app.get((err,req,res,next)=>{
+    res.send("Something went wrong")
+});
 
 
 
