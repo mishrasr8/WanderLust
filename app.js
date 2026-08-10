@@ -9,6 +9,7 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
+const {listingSchema}=require("./schema.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -35,6 +36,29 @@ async function main() {
     await mongoose.connect(process.env.MONGO_URL);
 }
 
+app.listen(process.env.PORT,()=>{
+    console.log("server is listening on ",process.env.PORT)
+});
+
+app.use((req, res, next) => {
+    console.log(req.method, req.url);
+    console.log(req.body);
+    next();
+});
+
+
+//Validate Listing
+
+const validateListing=(req,res,next)=>{
+    const {error}=listingSchema.validate(req.body);
+        if(error){
+            let errMsg=error.details.map((el)=>el.message).join(",")
+            throw new ExpressError(400,errMsg);
+        }else{next()}
+};
+
+
+//Home Route
 
 app.get("/",
     wrapAsync(async (req,res)=>{
@@ -42,10 +66,6 @@ app.get("/",
     const listing=await Listing.findById(id);
     res.render("./listings/home.ejs",{listing});
 }));
-
-app.listen(process.env.PORT,()=>{
-    console.log("server is listening on ",process.env.PORT)
-});
 
 
 
@@ -76,11 +96,9 @@ app.get("/listings/:id",wrapAsync(async (req,res,next)=>{
 //Create Route
 
 app.post("/listings",
+    validateListing,
     wrapAsync(async (req,res,next)=>{
-        if(!req.body.listing){
-            throw new ExpressError(400,"Bad Request");
-        }
-        let newListing=new Listing(req.body.listing);
+        const newListing=new Listing(req.body.listing);
         await newListing.save();
         res.redirect("/listings");
 }));
@@ -96,10 +114,9 @@ app.get("/listings/:id/edit",
 
 //Update Route
 
-app.put("/listings/:id",wrapAsync(async (req,res,next)=>{
-    if(!req.body.listing){
-        throw new ExpressError(400,"Bad Request");
-    }
+app.put("/listings/:id",
+    validateListing,
+    wrapAsync(async (req,res,next)=>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,req.body.listing);
     res.redirect(`/listings/${id}`);
@@ -122,5 +139,6 @@ app.all("/{*splat}", (req, res, next) => {
 
 app.use((err,req,res,next)=>{
     let{statusCode=500,message="Something went wrong"}=err;
-    res.status(statusCode).send(message);
+    res.render("error.ejs",{message});
+    // res.status(statusCode).send(message);
 });
