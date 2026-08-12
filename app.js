@@ -10,6 +10,7 @@ const ejsMate=require("ejs-mate");
 const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
 const {listingSchema}=require("./schema.js");
+const Review=require("./model/review.js");
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -127,9 +128,16 @@ app.put("/listings/:id",
 
 app.delete("/listings/:id",wrapAsync(async(req,res,next)=>{
     let {id}=req.params;
-    console.log(req.body.listing)
     await Listing.findByIdAndDelete(id);
     res.redirect("/listings");
+}));
+
+// Reviews
+
+app.post("/listings/:id/review",wrapAsync(async(req,res)=>{
+    let {id}=req.params;
+    let listing=await Listing.findById(id);
+
 }));
 
 // Error
