@@ -3,14 +3,13 @@ require("dotenv").config();
 const app=express();
 const mongoose=require("mongoose");
 const path=require("path");
-const ejs=require("ejs");
-const Listing=require("./model/listing.js");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const wrapAsync=require("./utils/wrapAsync.js");
 const ExpressError=require("./utils/ExpressError.js");
-const {listingSchema, reviewSchema}=require("./schema.js");
-const Review=require("./model/review.js");
+const wrapAsync=require("./utils/wrapAsync.js");
+
+const listings=require("./routes/listing.js");
+const review=require("./routes/review.js");
 
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -69,6 +68,8 @@ const validateReview=(req,res,next)=>{
         }else{next()}
 };
 
+app.use("/listings",listings);
+app.use("/listings/:id/reviews",review);
 
 //Home Route
 
@@ -81,91 +82,6 @@ app.get("/",
 
 
 
-//Index Route
-
-app.get("/listings",
-    wrapAsync(async(req,res,next)=>{
-        const allListings=await Listing.find({});
-        res.render("./listings/index.ejs",{allListings});
-}));
-
-//New Route
-
-app.get("/listings/new",(req,res,next)=>{
-    try{res.render("./listings/new.ejs");}
-    catch(err){next()}
-});
-
-//Show Route
-
-app.get("/listings/:id",wrapAsync(async (req,res,next)=>{
-        let{id}=req.params;
-        const listing=await Listing.findById(id).populate("reviews");
-        res.render("./listings/show.ejs",{listing});
-           
-}));
-
-//Create Route
-
-app.post("/listings",
-    validateListing,
-    wrapAsync(async (req,res,next)=>{
-        const newListing=new Listing(req.body.listing);
-        await newListing.save();
-        res.redirect("/listings");
-}));
-
-//Edit Route
-
-app.get("/listings/:id/edit",
-    wrapAsync(async (req,res,next)=>{
-    let{id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("./listings/edit.ejs",{listing});
-}));
-
-//Update Route
-
-app.put("/listings/:id",
-    validateListing,
-    wrapAsync(async (req,res,next)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,req.body.listing);
-    res.redirect(`/listings/${id}`);
-    
-}));
-
-//Delete Route
-
-app.delete("/listings/:id",wrapAsync(async(req,res,next)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-}));
-
-// Reviews
-
-app.post("/listings/:id/review",validateReview,wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    let listing=await Listing.findById(id);
-    let newReview=new Review(req.body.review);
-    listing.reviews.push(newReview);
-
-    await newReview.save();
-    await listing.save();
-
-    res.redirect(`/listings/${id}`)
-
-}));
-
-// Delete Review Route
-
-app.delete("/listings/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
-    let {id,reviewId}=req.params;
-    await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}})
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/listings/${id}`);
-}));
 
 // Error
 app.all("/{*splat}", (req, res, next) => {
