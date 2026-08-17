@@ -3,11 +3,14 @@ require("dotenv").config();
 const app=express();
 const mongoose=require("mongoose");
 const path=require("path");
-const ejs=require("ejs");
-const Listing=require("./model/listing.js");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
-const wrapAsync=require("./utils/wrapAsync.js")
+const ExpressError=require("./utils/ExpressError.js");
+const wrapAsync=require("./utils/wrapAsync.js");
+
+const listings=require("./routes/listing.js");
+const review=require("./routes/review.js");
+
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT;
@@ -28,124 +31,65 @@ main().then((res)=>{
     console.log(err);
 });
 
-
-
-
-
 // ================= DATABASE =================
 
 async function main() {
     await mongoose.connect(process.env.MONGO_URL);
 }
 
-
-app.get("/",async (req,res)=>{
-    let{id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("./listings/home.ejs",{listing});
-});
-
 app.listen(process.env.PORT,()=>{
     console.log("server is listening on ",process.env.PORT)
 });
 
-
-
-
-
-// app.get("/test",async (req,res)=>{
-//     let sample=new Listing({
-//         title:"My New Villa",
-//         desc:"by the beach",
-//         price:7000,
-//         location:"Andaman",
-//         country:"India"
-//     })
-
-//     await sample.save();
-//     console.log("Samplewas Saved");
-//     res.send("Successful testing");
-// });
-
-//Index Route
-
-app.get("/listings",async(req,res,next)=>{
-    try{
-        const allListings=await Listing.find({});
-        res.render("./listings/index.ejs",{allListings});
-    }catch (err){
-        next
-    }
+app.use((req, res, next) => {
+    console.log(req.method, req.url);
+    console.log(req.body);
+    next();
 });
 
-//New Route
 
-app.get("/listings/new",(req,res,next)=>{
-    try{res.render("./listings/new.ejs");}
-    catch(err){next()}
-});
+//Validate Listing
 
-//Show Route
+const validateListing=(req,res,next)=>{
+    const {error}=listingSchema.validate(req.body);
+        if(error){
+            let errMsg=error.details.map((el)=>el.message).join(",")
+            throw new ExpressError(400,errMsg);
+        }else{next()}
+};
 
-app.get("/listings/:id",async (req,res)=>{
+// Validate Review
+
+const validateReview=(req,res,next)=>{
+    const {error}=reviewSchema.validate(req.body);
+        if(error){
+            let errMsg=error.details.map((el)=>el.message).join(",")
+            throw new ExpressError(400,errMsg);
+        }else{next()}
+};
+
+app.use("/listings",listings);
+app.use("/listings/:id/reviews",review);
+
+//Home Route
+
+app.get("/",
+    wrapAsync(async (req,res)=>{
     let{id}=req.params;
     const listing=await Listing.findById(id);
-    res.render("./listings/show.ejs",{listing});
-    console.log(listing);
-});
-
-//Create Route
-
-app.post("/listings",
-    wrapAsync(async (req,res)=>{
-        let newListing=new Listing(req.body.listing);
-        await newListing.save();
-        res.redirect("/listings");
+    res.render("./listings/home.ejs",{listing});
 }));
 
-//Edit Route
 
-app.get("/listings/:id/edit",async (req,res)=>{
-    let{id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("./listings/edit.ejs",{listing});
-});
 
-//Update Route
-
-app.put("/listings/:id",async (req,res)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,req.body.listing);
-    res.redirect(`/listings/${id}`);
-    console.log(req.body.listing);
-});
-
-//Delete Route
-
-app.delete("/listings/:id",async(req,res)=>{
-    let {id}=req.params;
-    console.log(req.body.listing)
-    await Listing.findByIdAndDelete(id);
-    res.redirect("/listings");
-});
 
 // Error
-app.get((err,req,res,next)=>{
-    res.send("Something went wrong")
+app.all("/{*splat}", (req, res, next) => {
+    next(new ExpressError(404, "Page Not Found!"));
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+app.use((err,req,res,next)=>{
+    let{statusCode=500,message="Something went wrong"}=err;
+    res.render("error.ejs",{message});
+    // res.status(statusCode).send(message);
+});
