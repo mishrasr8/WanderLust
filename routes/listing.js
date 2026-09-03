@@ -60,6 +60,7 @@ router.post("/",
     wrapAsync(async (req,res,next)=>{
         const newListing=new Listing(req.body.listing);
         await newListing.save();
+        req.flash("success","New listing created successfully!");
         res.redirect("/listings");
 }));
 
@@ -88,6 +89,7 @@ router.put("/:id",
 router.delete("/:id",wrapAsync(async(req,res,next)=>{
     let {id}=req.params;
     await Listing.findByIdAndDelete(id);
+    req.flash("success","listing deleted!");
     res.redirect("/listings");
 }));
 

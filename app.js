@@ -5,6 +5,9 @@ const mongoose=require("mongoose");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
+const session=require("express-session");
+const flash=require("connect-flash");
+
 const ExpressError=require("./utils/ExpressError.js");
 const wrapAsync=require("./utils/wrapAsync.js");
 const Listing=require("./model/listing.js");
@@ -69,19 +72,37 @@ const validateReview=(req,res,next)=>{
         }else{next()}
 };
 
-app.use("/listings",listings);
-app.use("/listings/:id/reviews",review);
-
 //Home Route
 
 app.get("/",
     wrapAsync(async (req,res)=>{
-    let{id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("./listings/home.ejs",{listing});
-}));
+        let{id}=req.params;
+        const listing=await Listing.findById(id);
+        res.render("./listings/home.ejs",{listing});
+    }));
 
+//Express-session
+const sessionOptions={
+    secret: "mysecretcode",
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        expires:Date.now()+7*60*60*24*1000,
+        maxAge:7*60*60*24*1000,
+        httponly:true
+    }
+}
 
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
+    next();
+});
+    
+app.use("/listings",listings);
+app.use("/listings/:id/reviews",review);
 
 
 // Error
