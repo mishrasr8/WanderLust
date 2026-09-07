@@ -7,7 +7,10 @@ const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
 const session=require("express-session");
 const flash=require("connect-flash");
+const passport=require("passport");
+const LocalStrategy=require("passport-local");
 
+const User=require("./model/user.js");
 const ExpressError=require("./utils/ExpressError.js");
 const wrapAsync=require("./utils/wrapAsync.js");
 const Listing=require("./model/listing.js");
@@ -76,9 +79,8 @@ const validateReview=(req,res,next)=>{
 
 app.get("/",
     wrapAsync(async (req,res)=>{
-        let{id}=req.params;
-        const listing=await Listing.findById(id);
-        res.render("./listings/home.ejs",{listing});
+     
+        res.render("listings/home.ejs");
     }));
 
 //Express-session
@@ -96,9 +98,25 @@ const sessionOptions={
 app.use(session(sessionOptions));
 app.use(flash());
 
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
+    res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
     next();
+});
+
+app.get("/demouser",async(req,res)=>{
+    let fakeUser=new User({
+        email:"fake@gmai.com",
+        username:"fakeman"
+    });
+    let registeredUser=await User.register(fakeUser,"hello");
 });
     
 app.use("/listings",listings);
