@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
-const initdata = require("./data.js");
+const initData = require("./data.js");
 const Listing = require("../model/listing.js");
+
+require("dotenv").config();
+console.log("MONGO_URL:", process.env.MONGO_URL);
 
 const MONGO = process.env.MONGO_URL;
 
@@ -10,7 +13,8 @@ async function main() {
 
 const initDB = async () => {
     await Listing.deleteMany({});
-    await Listing.insertMany(initdata.data);
+    initdata.data=initData.data.map((obj)=>({...obj,owner:"6a9fab19e8405fe04d8464f1"}));
+    await Listing.insertMany(initData.data);
     console.log("Data was initialized successfully");
 };
 
