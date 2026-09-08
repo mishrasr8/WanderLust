@@ -15,8 +15,9 @@ const ExpressError=require("./utils/ExpressError.js");
 const wrapAsync=require("./utils/wrapAsync.js");
 const Listing=require("./model/listing.js");
 
-const listings=require("./routes/listing.js");
-const review=require("./routes/review.js");
+const listingsRouter=require("./routes/listing.js");
+const reviewRouter=require("./routes/review.js");
+const userRouter=require("./routes/user.js");
 
 
 const MONGO_URL = process.env.MONGO_URL;
@@ -48,12 +49,6 @@ app.listen(process.env.PORT,()=>{
     console.log("server is listening on ",process.env.PORT)
 });
 
-app.use((req, res, next) => {
-    console.log(req.method, req.url);
-    console.log(req.body);
-    next();
-});
-
 
 //Validate Listing
 
@@ -75,13 +70,6 @@ const validateReview=(req,res,next)=>{
         }else{next()}
 };
 
-//Home Route
-
-app.get("/",
-    wrapAsync(async (req,res)=>{
-     
-        res.render("listings/home.ejs");
-    }));
 
 //Express-session
 const sessionOptions={
@@ -98,29 +86,33 @@ const sessionOptions={
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use(passport.initialize());
-app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
 });
-
-app.get("/demouser",async(req,res)=>{
-    let fakeUser=new User({
-        email:"fake@gmai.com",
-        username:"fakeman"
-    });
-    let registeredUser=await User.register(fakeUser,"hello");
-});
     
-app.use("/listings",listings);
-app.use("/listings/:id/reviews",review);
+app.use("/listings",listingsRouter);
+app.use("/listings/:id/reviews",reviewRouter);
+app.use("/",userRouter);
+
+
+//Home Route
+
+app.get("/",
+    wrapAsync(async (req,res)=>{
+     
+        res.render("listings/home.ejs");
+    }));
 
 
 // Error
