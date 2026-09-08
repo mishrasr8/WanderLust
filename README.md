@@ -115,7 +115,7 @@ npm install
 Create a `.env` file or provide the following environment variable:
 
 ```text
-ATLASDB_URL=your_mongodb_connection_string
+MONGO_URL=your_mongodb_connection_string
 ```
 
 Never commit your MongoDB connection string or database credentials to GitHub.
