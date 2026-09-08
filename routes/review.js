@@ -5,18 +5,7 @@ const {listingSchema, reviewSchema}=require("../schema.js");
 const Review=require("../model/review.js");
 const wrapAsync=require("../utils/wrapAsync.js");
 const Listing=require("../model/listing.js");
-
-
-// Validate Review
-
-const validateReview=(req,res,next)=>{
-    const {error}=reviewSchema.validate(req.body);
-        if(error){
-            let errMsg=error.details.map((el)=>el.message).join(",")
-            throw new ExpressError(400,errMsg);
-        }else{next()}
-};
-
+const {validateReview}=require("../middleware.js");
 
 // Reviews
 
